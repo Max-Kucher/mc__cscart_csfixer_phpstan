@@ -4,6 +4,9 @@ parameters:
         - /code/addon/app
     scanDirectories:
         - /code/core/app
+    excludePaths:
+        - /code/core/app/lib/*
+        - /code/core/app/payments/*
     scanFiles:
         - /code/core/config.php
         - /code/core/config.local.php
