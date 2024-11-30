@@ -11,6 +11,9 @@
     "autoload": {
         "classmap": [
             "app/"
+        ],
+        "files": [
+            "bootstrap.php"
         ]
     }
 }

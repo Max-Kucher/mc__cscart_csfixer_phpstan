@@ -1,0 +1,10 @@
+parameters:
+    level: 5
+    paths:
+        - /code/addon/app
+    scanDirectories:
+        - /code/core/app
+    scanFiles:
+        - /code/core/config.php
+        - /code/core/config.local.php
+        - /code/core/init.php

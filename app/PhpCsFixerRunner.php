@@ -1,15 +1,22 @@
 <?php
 
-class PhpCsFixerRunner
+class PhpCsFixerRunner implements Runner
 {
     private string $dockerImage;
     private string $dockerTag;
     private string $configPath;
 
-    public function __construct(string $phpVersion, string $configPath)
+    public function __construct(string $phpVersion)
     {
         $this->dockerImage = 'ghcr.io/php-cs-fixer/php-cs-fixer';
         $this->dockerTag = "3.57-php$phpVersion";
+
+        $configPath = realpath(ROOT_DIR . '/.php-cs-fixer.php');
+        if (!$configPath) {
+            echo "Error: PHP CS Fixer config file not found.\n";
+            exit(1);
+        }
+
         $this->configPath = $configPath;
     }
 
@@ -28,7 +35,7 @@ class PhpCsFixerRunner
             $this->dockerTag
         );
 
-        echo "Running PHP CS Fixer through Docker...\n";
+        echo "Running PHP CS Fixer through Docker...\n$command\n";
         exec($command, $output, $returnVar);
 
         if ($returnVar !== 0) {

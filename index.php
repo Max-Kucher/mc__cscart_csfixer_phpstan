@@ -17,26 +17,22 @@ if (!is_dir($path)) {
 $addonName = basename($path);
 $addonXmlPath = "$path/app/addons/$addonName/addon.xml";
 
-if (!file_exists($addonXmlPath)) {
-    echo "Error: addon.xml file not found in the specified path.\n";
-    exit(1);
-}
+$addonXml = file_exists($addonXmlPath)
+    ? simplexml_load_file($addonXmlPath)
+    : null;
+$phpVersion = substr((string)($addonXml?->compatibility?->php_version?->min ?? '7.4'), 0, 3);
 
-$addonXml = simplexml_load_file($addonXmlPath);
-$phpVersion = substr((string)($addonXml->compatibility?->php_version?->min ?? '7.4'), 0, 3);
-
-$configPath = realpath(__DIR__ . '/.php-cs-fixer.php');
-if (!$configPath) {
-    echo "Error: PHP CS Fixer config file not found.\n";
-    exit(1);
-}
-
-try {
-    $fixer = new PhpCsFixerRunner($phpVersion, $configPath);
-    if (!$fixer->run($path)) {
+foreach ([
+     PhpCsFixerRunner::class,
+     AppPhpStan\Runner::class,
+] as $runnerClass) {
+    try {
+        $runner = new $runnerClass($phpVersion);
+        if (!$runner->run($path)) {
+            exit(1);
+        }
+    } catch (Exception $e) {
+        echo 'Error: ' . $e->getMessage() . "\n";
         exit(1);
     }
-} catch (Exception $e) {
-    echo 'Error: ' . $e->getMessage() . "\n";
-    exit(1);
 }
