@@ -1,0 +1,9 @@
+{
+    "name": "maxicart/phpstan_csfixer",
+    "description": "Repo with PHPStan and PHP CS Fixer",
+    "require-dev": {
+        "phpstan/phpstan": "^2.0",
+        "friendsofphp/php-cs-fixer": "^3.65"
+    },
+    "require": {}
+}
