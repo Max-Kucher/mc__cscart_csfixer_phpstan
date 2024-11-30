@@ -5,5 +5,12 @@
         "phpstan/phpstan": "^2.0",
         "friendsofphp/php-cs-fixer": "^3.65"
     },
-    "require": {}
+    "require": {
+      "ext-simplexml": "*"
+    },
+    "autoload": {
+        "classmap": [
+            "app/"
+        ]
+    }
 }
