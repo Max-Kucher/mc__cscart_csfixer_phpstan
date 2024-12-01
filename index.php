@@ -27,8 +27,8 @@ foreach ([
      AppPhpStan\Runner::class,
 ] as $runnerClass) {
     try {
-        $runner = new $runnerClass($phpVersion);
-        if (!$runner->run($path)) {
+        $runner = new $runnerClass($phpVersion, $path);
+        if (!$runner->run()) {
             exit(1);
         }
     } catch (Exception $e) {

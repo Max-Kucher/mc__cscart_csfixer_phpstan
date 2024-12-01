@@ -2,3 +2,5 @@
 /vendor/
 .php-cs-fixer.cache
 include_pathes.txt
+/cache/*
+!/cache/.gitkeep

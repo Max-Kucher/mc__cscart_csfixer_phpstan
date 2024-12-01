@@ -6,8 +6,10 @@ class PhpCsFixerRunner implements Runner
     private string $dockerTag;
     private string $configPath;
 
-    public function __construct(string $phpVersion)
-    {
+    public function __construct(
+        string $phpVersion,
+        private readonly string $path
+    ) {
         $this->dockerImage = 'ghcr.io/php-cs-fixer/php-cs-fixer';
         $this->dockerTag = "3.57-php$phpVersion";
 
@@ -20,11 +22,11 @@ class PhpCsFixerRunner implements Runner
         $this->configPath = $configPath;
     }
 
-    public function run(string $path): bool
+    public function run(): bool
     {
-        $realPath = realpath($path);
+        $realPath = realpath($this->path);
         if (!$realPath) {
-            throw new InvalidArgumentException("Invalid path: $path");
+            throw new InvalidArgumentException("Invalid path: $this->path");
         }
 
         $command = sprintf(

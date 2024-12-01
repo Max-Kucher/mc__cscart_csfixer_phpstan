@@ -6,12 +6,14 @@ class Runner implements \Runner
 {
     private string $dockerImage;
 
-    public function __construct(string $phpVersion)
-    {
+    public function __construct(
+        string $phpVersion,
+        private readonly string $path
+    ) {
         $this->dockerImage = "php:$phpVersion-cli";
     }
 
-    public function run(string $path): bool
+    public function run(): bool
     {
         // Чтение include_pathes.txt
         $includePathsFile = ROOT_DIR . '/include_pathes.txt';
@@ -43,12 +45,17 @@ class Runner implements \Runner
             exit(1);
         }
 
+        $localCacheDir = $this->getCacheDir();
+        $containerCacheDir = '/phpstan-cache';
+
         // Docker команда
         $command = sprintf(
-            "docker run --rm -v %s:/code/core -v %s:/code/addon -v %s:/project -w /project $this->dockerImage php vendor/bin/phpstan analyse /code/addon/app --configuration=/project/phpstan.neon",
+            "docker run --rm -v %s:/code/core -v %s:/code/addon -v %s:/project -v %s:%s -w /project $this->dockerImage php vendor/bin/phpstan analyse /code/addon/app --configuration=/project/phpstan.neon",
             escapeshellarg($corePath),
-            escapeshellarg(realpath($path)),
+            escapeshellarg(realpath($this->path)),
             escapeshellarg(dirname($configPath)),
+            escapeshellarg($localCacheDir),
+            escapeshellarg($containerCacheDir)
         );
 
         // Запуск команды
@@ -63,5 +70,16 @@ class Runner implements \Runner
 
         echo "PHPStan completed successfully.\n";
         return true;
+    }
+
+    private function getCacheDir(): string
+    {
+        $addonName = basename($this->path);
+        $cacheDir = ROOT_DIR . "/cache/$addonName";
+        if (!is_dir($cacheDir)) {
+            mkdir($cacheDir, 0777, true);
+        }
+
+        return $cacheDir;
     }
 }

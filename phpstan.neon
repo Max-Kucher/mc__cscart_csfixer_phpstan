@@ -11,3 +11,4 @@ parameters:
         - /code/core/config.php
         - /code/core/config.local.php
         - /code/core/init.php
+    tmpDir: /phpstan-cache
